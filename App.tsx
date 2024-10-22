@@ -4,7 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeWindStyleSheet } from "nativewind";
 import Welcome from './app/Welcome';
-import Home from './app/Home'; 
+import Home from './app/Home';
+import Excercise from './app/Excercise';
+
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -17,15 +19,20 @@ export default function App() {
     <NavigationContainer>
       <StatusBar style="light" />
       <Stack.Navigator initialRouteName="Welcome">
-        <Stack.Screen 
-          name="Welcome" 
+        <Stack.Screen
+          name="Welcome"
           component={Welcome}
           options={{ headerShown: false }}
         />
-        <Stack.Screen 
-          name="Home" 
+        <Stack.Screen
+          name="Home"
           component={Home}
-          options={{ headerShown: false }} 
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Exercise"
+          component={Excercise}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

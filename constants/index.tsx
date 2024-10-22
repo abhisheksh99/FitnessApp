@@ -1,3 +1,4 @@
+export const API_KEY = "c75f4b8af4msh3e7676a7e2df75bp1c86d2jsn7b2fb0309104"
 export const sliderImages = [
   require("../assets/images/slide1.png"),
   require("../assets/images/slide2.png"),
