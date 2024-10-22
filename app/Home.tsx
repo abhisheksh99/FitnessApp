@@ -5,8 +5,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImageSlider from "../components/ImageSlider";
+import BodyParts from "../components/BodyParts";
 
 const Home = () => {
   return (
@@ -45,6 +46,10 @@ const Home = () => {
       </View>
       <View>
         <ImageSlider/>
+      </View>
+      <View className="flex-1">
+        <BodyParts/>
+
       </View>
     </View>
   );
