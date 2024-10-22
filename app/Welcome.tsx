@@ -3,9 +3,11 @@ import { Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
 
-export default function Welcome() {
+const Welcome = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const navigation = useNavigation();
 
   return (
     <View className="flex-1 flex justify-end">
@@ -43,6 +45,7 @@ export default function Welcome() {
               <TouchableOpacity
                 style={{height:hp(7), width: wp(80)}}
                 className='bg-rose-500 flex items-center justify-center mx-auto rounded-full border-[2px] border-neutral-200'
+                onPress={() => navigation.navigate("Home")}
               >
                 <Text className='text-white font-bold tracking-widest' style={{fontSize:hp(3)}}>Get Started</Text>
               </TouchableOpacity>
@@ -53,3 +56,5 @@ export default function Welcome() {
     </View>
   );
 }
+
+export default Welcome;
