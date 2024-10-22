@@ -17,14 +17,6 @@ export const bodyParts = [
     image: require("../assets/images/cardio.png"),
   },
   {
-    name: "lowerArms",
-    image: require("../assets/images/lowerArms.png"),
-  },
-  {
-    name: "lowerLegs",
-    image: require("../assets/images/lowerLegs.png"),
-  },
-  {
     name: "chest",
     image: require("../assets/images/chest.png"),
   },
@@ -35,14 +27,6 @@ export const bodyParts = [
   {
     name: "shoulders",
     image: require("../assets/images/shoulders.png"),
-  },
-  {
-    name: "upperArms",
-    image: require("../assets/images/upperArms.png"),
-  },
-  {
-    name: "upperLegs",
-    image: require("../assets/images/upperLegs.png"),
   },
   {
     name: "waist",

@@ -6,7 +6,7 @@ import { NativeWindStyleSheet } from "nativewind";
 import Welcome from './app/Welcome';
 import Home from './app/Home';
 import Excercise from './app/Excercise';
-
+import ExcerciseDetails from './app/ExcerciseDetails'; // Import the ExerciseDetails component
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -33,6 +33,11 @@ export default function App() {
           name="Exercise"
           component={Excercise}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ExerciseDetails" 
+          component={ExcerciseDetails}
+          options={{ headerShown: false }} 
         />
       </Stack.Navigator>
     </NavigationContainer>
