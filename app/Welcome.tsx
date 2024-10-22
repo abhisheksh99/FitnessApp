@@ -1,21 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { NativeWindStyleSheet } from "nativewind";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
-NativeWindStyleSheet.setOutput({
-  default: "native",
-});
-
-export default function App() {
+export default function Welcome() {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
     <View className="flex-1 flex justify-end">
-      <StatusBar style="light" />
       {!imageLoaded && (
         <View className="absolute w-full h-full flex items-center justify-center bg-gray-900">
           <ActivityIndicator size="large" color="#e11d48" />
