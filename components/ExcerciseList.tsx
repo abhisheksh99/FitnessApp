@@ -7,7 +7,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 
 const ExerciseList = ({ data }) => {
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
+    <View className="flex-1 px-4 py-3 space-y-4">
       {data.map((item, index) => (
         <ExerciseCard key={index} item={item} index={index} />
       ))}
@@ -21,7 +21,7 @@ const ExerciseCard = ({ item, index }) => {
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("ExerciseDetails", { item })}
-      className="flex py-3 space-y-2"
+      className="flex-row items-center bg-white rounded-lg shadow-md p-4 mb-4"
     >
       <Animated.View
         entering={FadeInDown.delay(index * 100).duration(300)}
@@ -36,7 +36,7 @@ const ExerciseCard = ({ item, index }) => {
       </Animated.View>
       <Text
         style={{ fontSize: heightPercentageToDP(1.7) }}
-        className="text-neutral-700 font-semibold ml-1 tracking-wide"
+        className="text-neutral-700 font-semibold ml-1 tracking-wide p-2 uppercase"
       >
         {item?.name?.length > 20 ? item.name.slice(0, 20) + "..." : item.name}
       </Text>
