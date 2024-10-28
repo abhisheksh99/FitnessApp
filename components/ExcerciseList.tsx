@@ -36,7 +36,7 @@ const ExerciseCard = ({ item, index }) => {
       </Animated.View>
       <Text
         style={{ fontSize: heightPercentageToDP(1.7) }}
-        className="text-neutral-700 font-semibold ml-1 tracking-wide p-2 uppercase"
+        className="text-neutral-700 font-semibold ml-1 tracking-wide uppercase"
       >
         {item?.name?.length > 18 ? item.name.slice(0, 18) + "..." : item.name}
       </Text>
