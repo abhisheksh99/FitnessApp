@@ -8,6 +8,8 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 
+
+
 const ProfileScreen = () => {
   const { user, logout } = useAuth();
   const navigation = useNavigation();

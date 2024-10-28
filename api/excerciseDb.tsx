@@ -3,6 +3,7 @@ import { API_KEY } from "../constants";
 
 const baseUrl = "https://excercisedb.p.rapidapi.com";
 
+
 // Generic function to make API calls
 const apiCall = async (url, params) => {
     try {

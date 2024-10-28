@@ -48,7 +48,7 @@ const BMRCalculator = () => {
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="px-6 py-8">
-        <Text className="text-3xl font-bold text-center text-rose-600 mb-8 mt-5">
+        <Text className="text-xl font-bold text-center text-rose-600 mb-8 mt-5">
           BMR Calculator
         </Text>
 

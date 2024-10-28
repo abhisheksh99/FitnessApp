@@ -38,7 +38,7 @@ const ExerciseCard = ({ item, index }) => {
         style={{ fontSize: heightPercentageToDP(1.7) }}
         className="text-neutral-700 font-semibold ml-1 tracking-wide p-2 uppercase"
       >
-        {item?.name?.length > 20 ? item.name.slice(0, 20) + "..." : item.name}
+        {item?.name?.length > 18 ? item.name.slice(0, 18) + "..." : item.name}
       </Text>
     </TouchableOpacity>
   );
