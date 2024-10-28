@@ -19,39 +19,55 @@ const LoginScreen = () => {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-black">
-      <Text className="text-white text-4xl font-bold mb-10">Fitverse</Text>
-      <View className="w-4/5">
+    <View className="flex-1 justify-center items-center bg-black px-6 space-y-8">
+      <View className="w-full items-center space-y-4">
+        <Text className="text-white text-5xl font-extrabold tracking-wider">
+          Fitverse
+        </Text>
+        <Text className="text-gray-400 text-lg">Welcome back!</Text>
+      </View>
+
+      <View className="w-full space-y-4">
         <TextInput
-          className="bg-white rounded-full p-4 mb-4"
+          className="bg-gray-800/60 rounded-2xl py-4 px-6 text-white text-lg"
           placeholder="Email"
-          placeholderTextColor="#A0A0A0"
+          placeholderTextColor="#9CA3AF"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
         />
         <TextInput
-          className="bg-white rounded-full p-4 mb-4"
+          className="bg-gray-800/60 rounded-2xl py-4 px-6 text-white text-lg"
           placeholder="Password"
-          placeholderTextColor="#A0A0A0"
+          placeholderTextColor="#9CA3AF"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
       </View>
+
       <TouchableOpacity 
-        className="bg-red-500 rounded-full p-4 w-4/5 mb-4" 
+        className="w-full bg-rose-500 rounded-2xl py-4 shadow-lg" 
         onPress={handleLogin}
       >
-        <Text className="text-white text-lg font-bold text-center">Login</Text>
+        <Text className="text-white text-lg font-bold text-center">
+          LOGIN
+        </Text>
       </TouchableOpacity>
-      <Text className="text-white text-lg">Don't have an Account?</Text>
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('SignUp')}
-      >
-        <Text className="text-blue-500 text-lg">Sign Up</Text>
-      </TouchableOpacity>
+
+      <View className="flex-row space-x-2 items-center">
+        <Text className="text-gray-400 text-base">
+          Don't have an Account?
+        </Text>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('SignUp')}
+        >
+          <Text className="text-rose-500 text-base font-semibold">
+            Sign Up
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

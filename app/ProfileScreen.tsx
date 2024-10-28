@@ -117,64 +117,86 @@ const ProfileScreen = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-900">
-        <ActivityIndicator size="large" color="#F43F5E" />
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="#E11D48" />
       </View>
     );
   }
 
+  const InfoItem = ({ label, value, icon }) => (
+    <View className="flex-row items-center justify-between bg-white p-4 rounded-2xl mb-3 shadow-sm">
+      <View className="flex-row items-center">
+        <Ionicons name={icon} size={24} color="#E11D48" />
+        <Text className="text-gray-600 text-lg ml-3">{label}</Text>
+      </View>
+      <Text className="text-gray-800 text-lg font-semibold">{value || 'N/A'}</Text>
+    </View>
+  );
+
   return (
-    <ScrollView className="flex-1 bg-gray-900">
-      <View className="items-center justify-center px-6 py-10">
-        
-        {/* Profile Image */}
-        <View className="relative mb-8">
-          <Image
-            source={{ uri: userData?.photoURL || 'https://via.placeholder.com/150' }}
-            className="w-32 h-32 rounded-full border-4 border-rose-500"
-          />
-          <TouchableOpacity 
-            className="absolute bottom-0 right-0 bg-rose-500 p-2 rounded-full shadow-lg"
-            onPress={handleImagePick}
-          >
-            <Ionicons name="camera" size={24} color="white" />
-          </TouchableOpacity>
+    <ScrollView className="flex-1 bg-gray-50">
+      {/* Header Background */}
+      <View className="bg-rose-600 h-48 rounded-b-[40px] shadow-lg">
+        <View className="mt-12 items-center">
+          <Text className="text-white text-2xl font-bold mb-2">Profile</Text>
+        </View>
+      </View>
+
+      {/* Profile Content */}
+      <View className="px-6 -mt-20">
+        {/* Profile Image Card */}
+        <View className="bg-white rounded-3xl p-6 shadow-lg mb-6 items-center">
+          <View className="relative">
+            <Image
+              source={{ uri: userData?.photoURL || 'https://via.placeholder.com/150' }}
+              className="w-32 h-32 rounded-full border-4 border-white shadow-md"
+            />
+            <TouchableOpacity 
+              className="absolute bottom-0 right-0 bg-rose-600 p-3 rounded-full shadow-lg"
+              onPress={handleImagePick}
+            >
+              <Ionicons name="camera" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+          
+          <Text className="text-2xl font-bold text-gray-800 mt-4 mb-1">
+            {userData?.name || 'User Name'}
+          </Text>
+          <Text className="text-gray-500 text-base mb-2">
+            {userData?.email || 'user@example.com'}
+          </Text>
         </View>
 
-        {/* User Name */}
-        <Text className="text-3xl font-bold text-white mb-2">
-          {userData?.name || 'User Name'}
-        </Text>
-
-        {/* User Email */}
-        <Text className="text-gray-400 text-lg mb-8">
-          {userData?.email || 'user@example.com'}
-        </Text>
-
-        {/* User Details */}
-        <View className="bg-gray-800 rounded-xl p-6 w-full mb-8">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-white text-lg">Height:</Text>
-            <Text className="text-rose-500 text-lg font-bold">{userData?.height || 'N/A'} cm</Text>
-          </View>
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-white text-lg">Weight:</Text>
-            <Text className="text-rose-500 text-lg font-bold">{userData?.weight || 'N/A'} kg</Text>
-          </View>
-          <View className="flex-row justify-between items-center">
-            <Text className="text-white text-lg">Gender:</Text>
-            <Text className="text-rose-500 text-lg font-bold">{userData?.gender || 'N/A'}</Text>
-          </View>
+        {/* User Details Section */}
+        <View className="mb-6">
+          <Text className="text-lg font-semibold text-gray-800 mb-3 ml-1">Personal Information</Text>
+          <InfoItem 
+            label="Height"
+            value={userData?.height ? `${userData.height} cm` : 'N/A'}
+            icon="resize-outline"
+          />
+          <InfoItem 
+            label="Weight"
+            value={userData?.weight ? `${userData.weight} kg` : 'N/A'}
+            icon="scale-outline"
+          />
+          <InfoItem 
+            label="Gender"
+            value={userData?.gender || 'N/A'}
+            icon="person-outline"
+          />
         </View>
 
         {/* Logout Button */}
         <TouchableOpacity 
-          className="bg-rose-500 px-8 py-4 rounded-full shadow-lg w-full"
+          className="bg-rose-600 px-6 py-4 rounded-2xl shadow-lg mb-6"
           onPress={handleLogout}
         >
-          <Text className="text-white text-xl font-bold text-center">Logout</Text>
+          <View className="flex-row justify-center items-center">
+            <Ionicons name="log-out-outline" size={24} color="white" className="mr-2" />
+            <Text className="text-white text-lg font-semibold ml-2">Logout</Text>
+          </View>
         </TouchableOpacity>
-
       </View>
     </ScrollView>
   );

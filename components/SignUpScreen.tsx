@@ -22,14 +22,9 @@ const SignUpScreen = () => {
     }
 
     try {
-      // Create user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      // Update user profile with display name
       await updateProfile(user, { displayName: name });
-
-      // Store user data in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         name,
         email,
@@ -38,7 +33,6 @@ const SignUpScreen = () => {
         gender,
         createdAt: new Date()
       });
-
       Alert.alert('Success', 'Account created successfully!');
       navigation.navigate('HomeTabs');
     } catch (error) {
@@ -48,55 +42,65 @@ const SignUpScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-black">
-      <View className="flex-1 justify-center items-center py-10">
-        <Text className="text-white text-4xl font-extrabold mb-8">Join Fitverse</Text>
-        <View className="w-4/5 space-y-4">
+    <ScrollView className="flex-1 bg-black">
+      <View className="min-h-screen justify-center items-center px-6 py-10 space-y-8">
+        <View className="w-full items-center space-y-4">
+          <Text className="text-white text-5xl font-extrabold tracking-wider">
+            Join Fitverse
+          </Text>
+          <Text className="text-gray-400 text-lg">
+            Create your account
+          </Text>
+        </View>
+
+        <View className="w-full space-y-4">
           <TextInput
-            className="bg-white rounded-full py-3 px-5 text-gray-800"
+            className="bg-gray-800/60 rounded-2xl py-4 px-6 text-white text-lg"
             placeholder="Name"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor="#9CA3AF"
             value={name}
             onChangeText={setName}
           />
           <TextInput
-            className="bg-white rounded-full py-3 px-5 text-gray-800"
+            className="bg-gray-800/60 rounded-2xl py-4 px-6 text-white text-lg"
             placeholder="Email"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor="#9CA3AF"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
           />
           <TextInput
-            className="bg-white rounded-full py-3 px-5 text-gray-800"
+            className="bg-gray-800/60 rounded-2xl py-4 px-6 text-white text-lg"
             placeholder="Password"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor="#9CA3AF"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
           />
           <TextInput
-            className="bg-white rounded-full py-3 px-5 text-gray-800"
+            className="bg-gray-800/60 rounded-2xl py-4 px-6 text-white text-lg"
             placeholder="Height (cm)"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor="#9CA3AF"
             value={height}
             onChangeText={setHeight}
             keyboardType="numeric"
           />
           <TextInput
-            className="bg-white rounded-full py-3 px-5 text-gray-800"
+            className="bg-gray-800/60 rounded-2xl py-4 px-6 text-white text-lg"
             placeholder="Weight (kg)"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor="#9CA3AF"
             value={weight}
             onChangeText={setWeight}
             keyboardType="numeric"
           />
-          <View className="bg-white rounded-full overflow-hidden">
+          <View className="bg-gray-800/60 rounded-2xl overflow-hidden">
             <Picker
               selectedValue={gender}
               onValueChange={(itemValue) => setGender(itemValue)}
-              style={{ color: gender ? '#000' : '#A0A0A0', height: 45 }}
+              dropdownIconColor="white"
+              className="text-white h-14 px-4"
+              style={{ color: gender ? '#FFFFFF' : '#9CA3AF' }}
             >
               <Picker.Item label="Select Gender" value="" />
               <Picker.Item label="Male" value="male" />
@@ -106,18 +110,26 @@ const SignUpScreen = () => {
         </View>
         
         <TouchableOpacity 
-          className="bg-rose-500 rounded-full py-3 w-4/5 mt-6" 
+          className="w-full bg-rose-500 rounded-2xl py-4 shadow-lg" 
           onPress={handleSignUp}
         >
-          <Text className="text-white text-lg font-bold text-center">Sign Up</Text>
+          <Text className="text-white text-lg font-bold text-center">
+            CREATE ACCOUNT
+          </Text>
         </TouchableOpacity>
         
-        <Text className="text-white text-base mt-4">Already have an Account?</Text>
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('Login')}
-        >
-          <Text className="text-blue-400 text-base font-semibold">Login</Text>
-        </TouchableOpacity>
+        <View className="flex-row space-x-2 items-center">
+          <Text className="text-gray-400 text-base">
+            Already have an Account?
+          </Text>
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text className="text-rose-500 text-base font-semibold">
+              Login
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
