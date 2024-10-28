@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
 import React from "react";
 import {
   widthPercentageToDP as wp,
@@ -7,14 +7,11 @@ import {
 import { bodyParts } from "../constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from '@react-navigation/native';
-import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 
-const BodyPartCard = ({ item, index }) => {
+const BodyPartCard = ({ item }) => {
   const navigation = useNavigation();
   return (
-    <Animated.View
-      entering={FadeInDown.delay(index * 200).duration(600)}
-    >
+    <View>
       <TouchableOpacity
         style={{ 
           width: wp(44), 
@@ -25,8 +22,7 @@ const BodyPartCard = ({ item, index }) => {
         onPress={() => navigation.navigate("Exercise", { item })}
       >
         <View style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <Animated.Image
-            entering={FadeIn.delay(index * 200 + 300).duration(600)}
+          <Image
             source={item.image}
             resizeMode="cover"
             style={{ 
@@ -48,8 +44,7 @@ const BodyPartCard = ({ item, index }) => {
             end={{ x: 0.5, y: 1 }}
             className="rounded-b-[35px]"
           />
-          <Animated.Text 
-            entering={FadeIn.delay(index * 200 + 600).duration(600)}
+          <Text 
             style={{ 
               fontSize: hp(2.3), 
               position: 'absolute', 
@@ -65,22 +60,21 @@ const BodyPartCard = ({ item, index }) => {
             className="text-white font-semibold text-center tracking-wide"
           >
             {item?.name}
-          </Animated.Text>
+          </Text>
         </View>
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 };
 
 const BodyParts = () => {
   return (
     <View style={{ flex: 1 }}>
-      <Animated.Text 
-        entering={FadeInDown.duration(600)}
+      <Text 
         className="text-4xl font-bold text-neutral-900 text-center mb-4"
       >
         Exercises
-      </Animated.Text>
+      </Text>
       <FlatList
         data={bodyParts}
         numColumns={2}
@@ -95,7 +89,7 @@ const BodyParts = () => {
           justifyContent: 'center', 
           gap: wp(2) 
         }}
-        renderItem={({ item, index }) => <BodyPartCard item={item} index={index} />}
+        renderItem={({ item }) => <BodyPartCard item={item} />}
       />
     </View>
   );

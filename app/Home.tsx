@@ -1,49 +1,85 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { View, Text, Image } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, ActivityIndicator } from "react-native";
 import ImageSlider from "../components/ImageSlider";
 import BodyParts from "../components/BodyParts";
+import { useAuth } from "../context/authContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 const Home = () => {
+  const { user } = useAuth();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            setUserData(userDoc.data());
+          } else {
+            console.log("No such document!");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-gray-100">
+        <ActivityIndicator size="large" color="#F43F5E" />
+      </View>
+    );
+  }
+
   return (
-    <View className="flex-1 space-y-5">
+    <View className="flex-1 pt-5 bg-gray-100">
       <StatusBar style="dark" />
 
-      <View className="flex-row justify-between items-center mx-5">
-        <View className="space-y-2">
-          <Text
-            style={{ fontSize: hp(4.5) }}
-            className="font-bold tracking-wider text-neutral-700"
-          >
+      {/* Header Section */}
+      <View className="flex-row justify-between items-center px-5">
+        <View>
+          <Text className="text-4xl font-bold text-gray-800 mt-5">
             READY TO
           </Text>
-          <Text
-            style={{ fontSize: hp(5) }}
-            className="font-bold tracking-wider text-rose-700"
-          >
+          <Text className="text-4xl font-bold text-rose-700">
             Workout
           </Text>
         </View>
 
-        <View className="flex justify-center items-center space-y-2">
+        {/* Profile Image */}
+        <View>
           <Image
-            source={require("../assets/images/avatar.png")}
-            style={{ height: hp(6), width: hp(6) }}
-            className="rounded-full"
+            source={{ uri: userData?.photoURL || 'https://via.placeholder.com/150' }}
+            className="w-20 h-20 rounded-full border-4 border-rose-500 mt-5"
           />
         </View>
       </View>
-      <View>
-        <ImageSlider/>
-      </View>
-      <View className="flex-1">
-        <BodyParts/>
 
+      {/* Welcome Message */}
+      <View className="px-5 mt-2">
+        <Text className="text-lg text-gray-600">
+          Welcome, {userData?.name || user?.displayName || user?.email}!
+        </Text>
+      </View>
+
+      {/* Image Slider */}
+      <View className="my-4">
+        <ImageSlider />
+      </View>
+
+      {/* Body Parts Section */}
+      <View className="flex-1 px-5">
+        <BodyParts />
       </View>
     </View>
   );

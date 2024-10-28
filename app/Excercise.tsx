@@ -1,15 +1,13 @@
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { fetchExercisesByBodyPart } from "../api/excerciseDb";
 import { StatusBar } from "expo-status-bar";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { bodyParts } from "../constants";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import ExerciseList from "../components/ExcerciseList";
+
 
 const Exercise = () => {
   const navigation = useNavigation();
@@ -29,12 +27,10 @@ const Exercise = () => {
     setExercises(data);
   };
 
-  const bodyPartImage = bodyParts.find(
-    (part) => part.name === item.name
-  )?.image;
+  const bodyPartImage = bodyParts.find((part) => part.name === item.name)?.image;
 
   return (
-    <ScrollView>
+    <View style={{ flex: 1 }}>
       <StatusBar style="light" />
       {bodyPartImage && (
         <Image
@@ -74,10 +70,16 @@ const Exercise = () => {
           {item.name} Exercises
         </Text>
       </View>
-      <View className="mb-10">
-        <ExerciseList data={exercises} />
-      </View>
-    </ScrollView>
+
+      
+      <FlatList
+        data={exercises}
+        keyExtractor={(exercise) => exercise.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
+        renderItem={({ item }) => <ExerciseList data={[item]} />} 
+      />
+    </View>
   );
 };
 
