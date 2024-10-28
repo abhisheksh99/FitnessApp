@@ -55,11 +55,6 @@ export default function App() {
             component={ExcerciseDetails}
             options={{ headerShown: false }} 
           />
-                    {/* <Stack.Screen
-            name="ExerciseTimer" 
-            component={ExerciseTimer}
-            options={{ headerShown: false }} 
-          /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
