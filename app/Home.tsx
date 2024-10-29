@@ -1,11 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator } from "react-native";
+import { View, Text, Image, ActivityIndicator, Alert } from "react-native";
 import ImageSlider from "../components/ImageSlider";
 import BodyParts from "../components/BodyParts";
 import { useAuth } from "../context/authContext";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../firebaseConfig";
 
 const Home = () => {
   const { user } = useAuth();
@@ -13,25 +14,41 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.uid) {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            setUserData(userDoc.data());
-          } else {
-            console.log("No such document!");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+    let unsubscribe;
+    if (user?.uid) {
+      const userDocRef = doc(db, 'users', user.uid);
 
-    fetchUserData();
+      unsubscribe = onSnapshot(userDocRef, (doc) => {
+        if (doc.exists()) {
+          setUserData(doc.data());
+        }
+        setLoading(false);
+      }, () => setLoading(false));
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [user]);
+
+  const uploadImage = async (uri) => {
+    try {
+      setLoading(true);
+      const blob = await (await fetch(uri)).blob();
+      const storageRef = ref(storage, `profileImages/${user.uid}_profile.jpg`);
+      await uploadBytes(storageRef, blob);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      await updateDoc(doc(db, "users", user.uid), { photoURL: downloadURL });
+
+      setUserData((prevData) => ({ ...prevData, photoURL: downloadURL }));
+      Alert.alert("Success", "Profile picture updated successfully!");
+    } catch (error) {
+      Alert.alert("Error", "Failed to update profile picture. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -48,12 +65,8 @@ const Home = () => {
       {/* Header Section */}
       <View className="flex-row justify-between items-center px-5">
         <View>
-          <Text className="text-4xl font-bold text-gray-800 mt-5">
-            READY TO
-          </Text>
-          <Text className="text-4xl font-bold text-rose-700">
-            Workout
-          </Text>
+          <Text className="text-4xl font-bold text-gray-800 mt-5">READY TO</Text>
+          <Text className="text-4xl font-bold text-rose-700">Workout</Text>
         </View>
 
         {/* Profile Image */}
