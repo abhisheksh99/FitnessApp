@@ -10,11 +10,11 @@ import {
 import { Picker } from "@react-native-picker/picker";
 
 const BMRCalculator = () => {
-  const [age, setAge] = useState<string>("");
-  const [weight, setWeight] = useState<string>("");
-  const [height, setHeight] = useState<string>("");
-  const [gender, setGender] = useState<string>("male");
-  const [bmr, setBmr] = useState<number | null>(null);
+  const [age, setAge] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [gender, setGender] = useState("male");
+  const [bmr, setBmr] = useState(null);
 
   const activityLevels = [
     { level: "Sedentary: little or no exercise", factor: 1.2 },
