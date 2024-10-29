@@ -35,7 +35,7 @@ const BMRCalculator = () => {
     const heightNum = parseFloat(height);
     const ageNum = parseInt(age, 10);
 
-    let bmrValue: number;
+    let bmrValue;
     if (gender === "male") {
       bmrValue = 88.362 + 13.397 * weightNum + 4.799 * heightNum - 5.677 * ageNum;
     } else {
@@ -43,6 +43,13 @@ const BMRCalculator = () => {
     }
 
     setBmr(bmrValue);
+  };
+
+  const getMacroBreakdown = (calories) => {
+    const protein = Math.round((0.25 * calories) / 4);
+    const carbs = Math.round((0.5 * calories) / 4);
+    const fats = Math.round((0.25 * calories) / 9);
+    return { protein, carbs, fats };
   };
 
   return (
@@ -116,9 +123,7 @@ const BMRCalculator = () => {
           onPress={calculateBMR}
           className="w-full bg-rose-600 py-4 rounded-full items-center shadow-md mb-8"
         >
-          <Text className="text-white font-bold text-lg">
-            Calculate BMR
-          </Text>
+          <Text className="text-white font-bold text-lg">Calculate BMR</Text>
         </TouchableOpacity>
 
         {bmr !== null && (
@@ -131,20 +136,23 @@ const BMRCalculator = () => {
               Daily Calorie Needs Based on Activity Level:
             </Text>
 
-            <View className="space-y-4">
-              {activityLevels.map((activity) => (
-                <View
-                  key={activity.level}
-                  className="flex-row justify-between items-center py-3 border-b border-gray-200"
-                >
-                  <Text className="text-sm text-gray-600 flex-1 pr-4">
-                    {activity.level}
-                  </Text>
-                  <Text className="text-sm font-semibold text-rose-600">
-                    {Math.round(bmr * activity.factor)} kcal/day
-                  </Text>
-                </View>
-              ))}
+            <View className="space-y-4 mb-6">
+              {activityLevels.map((activity) => {
+                const dailyCalories = Math.round(bmr * activity.factor);
+                const { protein, carbs, fats } = getMacroBreakdown(dailyCalories);
+
+                return (
+                  <View key={activity.level} className="border-b border-gray-200 pb-4 mb-4">
+                    <Text className="text-gray-600 mb-2">{activity.level}</Text>
+                    <Text className="text-sm font-semibold text-rose-600 mb-2">
+                      {dailyCalories} kcal/day
+                    </Text>
+                    <Text className="text-sm text-gray-700">Protein: {protein}g</Text>
+                    <Text className="text-sm text-gray-700">Carbs: {carbs}g</Text>
+                    <Text className="text-sm text-gray-700">Fats: {fats}g</Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
         )}
