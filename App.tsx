@@ -10,7 +10,6 @@ import TabNavigator from './app/navigation/TabNavigator';
 import { AuthProvider } from './context/authContext';
 import LoginScreen from './components/LoginScreen';
 import SignUpScreen from './components/SignUpScreen';
-import ExerciseTimer from './app/ExcerciseTimer';
 
 
 NativeWindStyleSheet.setOutput({

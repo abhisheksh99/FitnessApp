@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Alert, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/authContext';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
-
-
 
 const ProfileScreen = () => {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
+  const [exerciseHistory, setExerciseHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchDate, setSearchDate] = useState('');
+  const [filteredHistory, setFilteredHistory] = useState([]);
 
   useEffect(() => {
     fetchUserData();
+    fetchExerciseHistory();
   }, [user]);
+
+  useEffect(() => {
+    filterHistory();
+  }, [searchDate, exerciseHistory]);
 
   const fetchUserData = async () => {
     if (user?.uid) {
@@ -35,6 +41,49 @@ const ProfileScreen = () => {
         setLoading(false);
       }
     }
+  };
+
+  const fetchExerciseHistory = async () => {
+    if (user?.email) {  // Changed from user?.uid to user?.email
+      setLoading(true);
+      try {
+        const exerciseLogsRef = collection(db, 'exerciseLogs');
+        const q = query(exerciseLogsRef, where('userEmail', '==', user.email)); // Changed from userId to userEmail
+        const querySnapshot = await getDocs(q);
+
+        const historyData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          timestamp: doc.data().timestamp?.toDate(), // Convert Firestore Timestamp to Date
+        }));
+
+        // Sort by timestamp in descending order (most recent first)
+        historyData.sort((a, b) => b.timestamp - a.timestamp);
+        
+        setExerciseHistory(historyData);
+        setFilteredHistory(historyData); 
+      } catch (error) {
+        console.error("Error fetching exercise history:", error);
+        Alert.alert("Error", "Failed to fetch exercise history");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const filterHistory = () => {
+    if (!searchDate) {
+      setFilteredHistory(exerciseHistory);
+      return;
+    }
+
+    const filtered = exerciseHistory.filter(exercise => {
+      if (!exercise.timestamp) return false;
+      const exerciseDate = exercise.timestamp.toLocaleDateString().toLowerCase();
+      return exerciseDate.includes(searchDate.toLowerCase());
+    });
+
+    setFilteredHistory(filtered);
   };
 
   const handleImagePick = async () => {
@@ -137,16 +186,13 @@ const ProfileScreen = () => {
 
   return (
     <ScrollView className="flex-1 bg-gray-50">
-      {/* Header Background */}
       <View className="bg-rose-600 h-48 rounded-b-[40px] shadow-lg">
         <View className="mt-12 items-center">
           <Text className="text-white text-2xl font-bold mb-2">Profile</Text>
         </View>
       </View>
 
-      {/* Profile Content */}
       <View className="px-6 -mt-20">
-        {/* Profile Image Card */}
         <View className="bg-white rounded-3xl p-6 shadow-lg mb-6 items-center">
           <View className="relative">
             <Image
@@ -169,7 +215,7 @@ const ProfileScreen = () => {
           </Text>
         </View>
 
-        {/* User Details Section */}
+        {/* Personal Information Section */}
         <View className="mb-6">
           <Text className="text-lg font-semibold text-gray-800 mb-3 ml-1">Personal Information</Text>
           <InfoItem 
@@ -187,6 +233,37 @@ const ProfileScreen = () => {
             value={userData?.gender || 'N/A'}
             icon="person-outline"
           />
+        </View>
+
+        {/* Exercise History Section with Search */}
+        <View className="mb-6">
+          <Text className="text-lg font-semibold text-gray-800 mb-3 ml-1">Exercise History</Text>
+          
+          {/* Search Input */}
+          <View className="bg-white rounded-2xl mb-4 shadow-sm">
+            <TextInput
+              className="p-4 text-gray-700"
+              placeholder="Search by date (e.g., 10/28/2024)"
+              value={searchDate}
+              onChangeText={setSearchDate}
+            />
+          </View>
+
+          {filteredHistory.length === 0 ? (
+            <Text className="text-gray-500 text-center">No exercise history found.</Text>
+          ) : (
+            filteredHistory.map((exercise) => (
+              <View key={exercise.id} className="bg-white p-4 rounded-2xl mb-3 shadow-sm">
+                <Text className="text-lg font-semibold text-gray-800">{exercise.name}</Text>
+                <Text className="text-gray-600">
+                  Date: {exercise.timestamp?.toLocaleDateString() || 'N/A'}
+                </Text>
+                <Text className="text-gray-600">Sets: {exercise.sets}</Text>
+                <Text className="text-gray-600">Reps: {exercise.reps}</Text>
+                <Text className="text-gray-600">Weight: {exercise.weight} kg</Text>
+              </View>
+            ))
+          )}
         </View>
 
         {/* Logout Button */}

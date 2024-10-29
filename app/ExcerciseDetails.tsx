@@ -5,6 +5,8 @@ import {
   Modal,
   SafeAreaView,
   ScrollView,
+  TextInput,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { Image } from "expo-image";
@@ -19,10 +21,18 @@ import Animated, {
   FadeInDown,
   FadeInUp,
 } from "react-native-reanimated";
+import Timer from "../components/Timer";
+import { db } from "../firebaseConfig";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { useAuth } from "../context/authContext";
 
 const ExerciseDetails = ({ route }) => {
   const { item } = route.params;
+  const { user } = useAuth();
   const [modalVisible, setModalVisible] = useState(true);
+  const [sets, setSets] = useState("");
+  const [reps, setReps] = useState("");
+  const [weight, setWeight] = useState("");
   const navigation = useNavigation();
 
   const closeModal = () => {
@@ -30,6 +40,40 @@ const ExerciseDetails = ({ route }) => {
     setTimeout(() => {
       navigation.goBack();
     }, 300);
+  };
+
+  // Updated saveTrackingData function with proper user email handling
+  const saveTrackingData = async () => {
+    if (!sets || !reps || !weight) {
+      Alert.alert("Incomplete Data", "Please fill in all tracking fields.");
+      return;
+    }
+
+    if (!user) {
+      Alert.alert("Error", "User not logged in");
+      return;
+    }
+
+    try {
+      const logData = {
+        exerciseId: item.id,
+        name: item.name,
+        sets: Number(sets),
+        reps: Number(reps),
+        weight: Number(weight),
+        timestamp: Timestamp.now(),
+        userEmail: user.email || 'unknown', // Ensure email is captured or marked as unknown
+        userId: user.uid, // Adding user ID as additional identifier
+      };
+
+      console.log('Saving exercise log with user data:', logData); // Debug log
+
+      await addDoc(collection(db, "exerciseLogs"), logData);
+      Alert.alert("Success", "Your exercise data has been saved.");
+    } catch (error) {
+      console.error("Error saving tracking data:", error);
+      Alert.alert("Error", "Could not save data. Please try again.");
+    }
   };
 
   const InfoSection = ({ title, data, delay }) => (
@@ -113,7 +157,7 @@ const ExerciseDetails = ({ route }) => {
                   entering={FadeInDown.delay(600).duration(500)}
                   className="text-3xl font-extrabold mb-3 text-gray-800 tracking-wide text-center uppercase"
                   style={{
-                    textShadowColor: "rgba(0, 0, 0, 0.1)",
+                    textShadowColor: "rgba(0, 0, 0, 1)",
                     textShadowOffset: { width: 1, height: 1 },
                     textShadowRadius: 2,
                   }}
@@ -141,28 +185,45 @@ const ExerciseDetails = ({ route }) => {
                   delay={1200}
                 />
 
-                <Animated.Text
-                  entering={FadeInDown.delay(1400).duration(500)}
-                  className="text-lg font-semibold mb-2 text-gray-700"
-                >
-                  Instructions:
-                </Animated.Text>
-                {item.instructions.map((instruction, index) => (
-                  <Animated.View
-                    key={index}
-                    entering={FadeInDown.delay(1500 + index * 100).duration(
-                      500
-                    )}
-                    className="flex-row mb-3"
+                {/* Tracking Inputs */}
+                <View className="mb-6">
+                  <Text className="text-lg font-semibold mb-2 text-gray-700">
+                    Track Your Progress:
+                  </Text>
+                  <TextInput
+                    placeholder="Sets"
+                    keyboardType="numeric"
+                    value={sets}
+                    onChangeText={setSets}
+                    className="mb-3 px-4 py-2 border border-gray-300 rounded-md"
+                  />
+                  <TextInput
+                    placeholder="Reps"
+                    keyboardType="numeric"
+                    value={reps}
+                    onChangeText={setReps}
+                    className="mb-3 px-4 py-2 border border-gray-300 rounded-md"
+                  />
+                  <TextInput
+                    placeholder="Weight (kg)"
+                    keyboardType="numeric"
+                    value={weight}
+                    onChangeText={setWeight}
+                    className="mb-3 px-4 py-2 border border-gray-300 rounded-md"
+                  />
+                  <TouchableOpacity
+                    onPress={saveTrackingData}
+                    className="py-2 bg-indigo-500 rounded-full"
                   >
-                    <Text className="text-fuchsia-600 font-bold mr-2">
-                      {index + 1}.
+                    <Text className="text-center text-white font-bold">
+                      Save Tracking Data
                     </Text>
-                    <Text className="text-base text-gray-600 flex-1">
-                      {instruction}
-                    </Text>
-                  </Animated.View>
-                ))}
+                  </TouchableOpacity>
+                </View>
+
+                {/* Timer Integration */}
+                <Timer onTimerComplete={saveTrackingData} />
+
                 <Animated.View entering={FadeInUp.delay(1800).duration(500)}>
                   <TouchableOpacity
                     onPress={closeModal}
