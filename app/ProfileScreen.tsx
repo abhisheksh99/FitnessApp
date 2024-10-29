@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Ale
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/authContext';
-import { doc, getDoc, updateDoc, collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
@@ -43,31 +43,31 @@ const ProfileScreen = () => {
     }
   };
 
-  const fetchExerciseHistory = async () => {
-    if (user?.email) {  // Changed from user?.uid to user?.email
+  const fetchExerciseHistory = () => {
+    if (user?.email) {
       setLoading(true);
-      try {
-        const exerciseLogsRef = collection(db, 'exerciseLogs');
-        const q = query(exerciseLogsRef, where('userEmail', '==', user.email)); // Changed from userId to userEmail
-        const querySnapshot = await getDocs(q);
-
+      const exerciseLogsRef = collection(db, 'exerciseLogs');
+      const q = query(exerciseLogsRef, where('userEmail', '==', user.email));
+      
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const historyData = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
-          timestamp: doc.data().timestamp?.toDate(), // Convert Firestore Timestamp to Date
+          timestamp: doc.data().timestamp?.toDate(),
         }));
 
-        // Sort by timestamp in descending order (most recent first)
         historyData.sort((a, b) => b.timestamp - a.timestamp);
-        
+
         setExerciseHistory(historyData);
-        setFilteredHistory(historyData); 
-      } catch (error) {
+        setFilteredHistory(historyData);
+        setLoading(false);
+      }, (error) => {
         console.error("Error fetching exercise history:", error);
         Alert.alert("Error", "Failed to fetch exercise history");
-      } finally {
         setLoading(false);
-      }
+      });
+
+      return unsubscribe; // Cleanup listener on component unmount
     }
   };
 
@@ -84,6 +84,24 @@ const ProfileScreen = () => {
     });
 
     setFilteredHistory(filtered);
+  };
+
+  const saveExerciseLog = async (exercise) => {
+    try {
+      await addDoc(collection(db, 'exerciseLogs'), {
+        exerciseId: exercise.id,
+        name: exercise.name,
+        sets: exercise.sets,
+        reps: exercise.reps,
+        weight: exercise.weight,
+        timestamp: Timestamp.now(),
+        userEmail: user.email,
+      });
+      Alert.alert("Success", "Exercise log saved.");
+    } catch (error) {
+      console.error("Error saving exercise log:", error);
+      Alert.alert("Error", "Failed to save exercise log.");
+    }
   };
 
   const handleImagePick = async () => {
